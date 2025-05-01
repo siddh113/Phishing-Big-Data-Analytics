@@ -9,11 +9,9 @@ import socket
 from datetime import datetime
 import os
 
-# ----------------- Load the trained model -----------------
 model = joblib.load('phishing_rf_model2.pkl')
 history_file = 'history.csv'
 
-# ----------------- Feature Checker Functions -----------------
 def check_brand_mismatch(url, real_domain):
     brands = ['google', 'facebook', 'amazon', 'skype', 'microsoft', 'paypal', 'apple', 'youtube', 'linkedin', 'instagram']
     for brand in brands:
@@ -28,7 +26,6 @@ def check_suspicious_subdomain(domain):
     subdomain = domain.split('.')[0]
     return -1 if any(char.isdigit() for char in subdomain) and len(subdomain) > 6 else 1
 
-# ----------------- Feature Extraction Function -----------------
 def extract_features(url):
     features = {}
     try:
@@ -83,7 +80,6 @@ def extract_features(url):
 
     return features
 
-# ----------------- Save Prediction to History -----------------
 def save_to_history(url, result, probability):
     row = {
         'Timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -98,13 +94,11 @@ def save_to_history(url, result, probability):
         df = pd.DataFrame([row])
     df.to_csv(history_file, index=False)
 
-# ----------------- Streamlit UI -----------------
 st.set_page_config(page_title="Phishing URL Detector", layout="centered")
 st.title("🔗 Phishing URL Detection App")
 st.sidebar.title("📊 Dashboard")
 view = st.sidebar.radio("Choose View", ["Detector", "History Dashboard"])
 
-# ----------------- Detector Page -----------------
 if view == "Detector":
     st.write("Paste a URL below and detect whether it's phishing or legitimate.")
 
@@ -139,7 +133,6 @@ if view == "Detector":
         else:
             st.warning("⚡ Please enter a URL to check.")
 
-# ----------------- History Dashboard -----------------
 elif view == "History Dashboard":
     st.subheader("📜 Detection History")
     if os.path.exists(history_file):
